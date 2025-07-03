@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +21,7 @@ class NoteController extends Controller
      */
     public function create()
     {
-        //
+        return view('notes.create');
     }
 
     /**
@@ -31,8 +30,8 @@ class NoteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'body' => 'required'
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
         ]);
 
         Note::create([
@@ -41,7 +40,7 @@ class NoteController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('notes.index');
+        return redirect()->route('notes.index')->with('success', 'Note created successfully!');
     }
 
     /**
@@ -49,7 +48,12 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        //
+        // Optional: Only allow owner to view
+        if ($note->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('notes.show', compact('note'));
     }
 
     /**
@@ -57,7 +61,11 @@ class NoteController extends Controller
      */
     public function edit(Note $note)
     {
-        //
+        if ($note->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('notes.edit', compact('note'));
     }
 
     /**
@@ -69,12 +77,17 @@ class NoteController extends Controller
             abort(403);
         }
 
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+        ]);
+
         $note->update([
             'title' => $request->title,
             'body' => $request->body,
         ]);
 
-        return redirect()->route('notes.index');
+        return redirect()->route('notes.index')->with('success', 'Note updated successfully!');
     }
 
     /**
@@ -82,6 +95,12 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
-        //
+        if ($note->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $note->delete();
+
+        return redirect()->route('notes.index')->with('success', 'Note deleted successfully!');
     }
 }

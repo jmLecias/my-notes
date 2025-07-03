@@ -17,7 +17,12 @@
                             Admin
                         </x-nav-link>
                     @endadmin
+                    
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        Dashboard
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.index')">
                         My Notes
                     </x-nav-link>
                 </div>
@@ -86,6 +91,9 @@
                 </x-responsive-nav-link>
             @endadmin
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                Dashboard
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('notes.index')" :active="request()->routeIs('notes.index')">
                 My Notes
             </x-responsive-nav-link>
         </div>
